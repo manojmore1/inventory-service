@@ -6,12 +6,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+
 
 @Configuration
 public class DynamoDBConfig {
@@ -28,10 +30,15 @@ public class DynamoDBConfig {
 
      @Bean
     public DynamoDbClient dynamoDbClient() {
-        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(awsAccessKey, awsSecretKey);
+//        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(awsAccessKey, awsSecretKey);
+
+         // Use DefaultAWSCredentialsProviderChain to get credentials
+         DefaultCredentialsProvider credentialsProvider = DefaultCredentialsProvider.create();
+
         return DynamoDbClient.builder()
                 .region(Region.AP_SOUTH_1) // Set your desired region
-                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+//                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+                .credentialsProvider(credentialsProvider)
                 .build();
     }
 
