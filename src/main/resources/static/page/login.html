@@ -45,7 +45,7 @@
             const homeResponse = await fetch('/erp/dashboard', {
                             method: 'GET',
                             headers: {
-                                'Authorization': `Bearer ${jwtToken}`, // Include the JWT in the headers
+                                'Authorization': `${jwtToken}`, // Include the JWT in the headers
                             },
                         });
 
@@ -55,6 +55,7 @@
                             document.open();
                             document.write(homeContent);
                             document.close();
+                            window.history.pushState({ path: '/erp/dashboard' }, '', '/erp/dashboard');
                         } else {
                             const errorMessage = await homeResponse.text();
                             $('#error-message').text(response.message || 'Failed to load home page.').show();
