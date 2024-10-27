@@ -36,10 +36,10 @@
 
         $('#loginForm').on('submit', function(event) {
             event.preventDefault();
-            jwtToken = localStorage.getItem('jwtToken');
+            jwtToken = localStorage.getItem('Authorization');
             // Perform AJAX POST request to login endpoint
             $.ajax({
-                url: '/auth/logout',
+                url: '/logout',
                 method: 'POST',
                 contentType: 'application/json',
                 headers: {
@@ -47,7 +47,7 @@
                             },
                 success: function(response) {
                     console.log(response);
-                    window.location.href = "/page/login.html"; // Redirect to the UR
+                    window.location.href = "/login.html"; // Redirect to the UR
                 },
                 error: function(error) {
                     console.log(error);

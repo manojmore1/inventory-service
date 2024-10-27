@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .login-container h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .login-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .login-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Login</h2>
+    <div class="error-message" id="error-message"></div>
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter your username" required>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+    </div>
+    <button class="login-button" onclick="login()">Login</button>
+</div>
+
+<script>
+    async function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('error-message');
+
+        try {
+            const response = await fetch('/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // Display the error message
+                errorMessage.textContent = data.message || 'Login failed. Please try again.';
+                errorMessage.style.display = 'block';
+            } else {
+                // Hide any previous error message
+                errorMessage.style.display = 'none';
+
+                // Get the landing URL and JWT token from the response
+                const { landing_url, jwt } = data;
+
+                if (landing_url && jwt) {
+                    // Store the JWT token in local storage or session storage
+                    sessionStorage.setItem('jwt', jwt);
+
+                    // Redirect to the landing URL
+                    window.location.href = landing_url;
+                } else {
+                    errorMessage.textContent = 'Invalid response from server.';
+                    errorMessage.style.display = 'block';
+                }
+            }
+        } catch (error) {
+            // Handle any network errors
+            errorMessage.textContent = 'An error occurred. Please try again later.';
+            errorMessage.style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
